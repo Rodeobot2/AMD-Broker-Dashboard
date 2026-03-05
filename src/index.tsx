@@ -6,6 +6,7 @@ import { useState } from "react";
 const style = document.createElement("style");
 style.innerHTML = `
   @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap');
+  * { box-sizing: border-box; }
   .page-heading {
     font-family: 'Montserrat', sans-serif !important;
     font-weight: 900 !important;
@@ -18,6 +19,44 @@ style.innerHTML = `
     text-transform: uppercase !important;
     letter-spacing: 0.06em !important;
     font-size: 12px !important;
+  }
+  .sidebar {
+    width: 220px;
+    background: #1C1A1A;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+    transition: transform 0.25s ease;
+    z-index: 200;
+  }
+  .sidebar-overlay {
+    display: none;
+  }
+  .topbar-stats { display: flex; }
+  .content-pad { padding: 28px; }
+  @media (max-width: 768px) {
+    .sidebar {
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      transform: translateX(-100%);
+    }
+    .sidebar.open {
+      transform: translateX(0);
+      box-shadow: 4px 0 24px rgba(0,0,0,0.3);
+    }
+    .sidebar-overlay {
+      display: block;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 199;
+    }
+    .topbar-stats { display: none !important; }
+    .content-pad { padding: 16px; }
+    .stat-cards { flex-direction: column !important; }
+    .dash-bottom { flex-direction: column !important; }
+    .listings-table { overflow-x: auto; display: block; }
+    .filter-row { overflow-x: auto; padding-bottom: 4px; }
   }
 `;
 document.head.appendChild(style);
@@ -177,7 +216,7 @@ const DashboardPage = ({ listings, activity, onViewAll }) => (
       </div>
     </div>
 
-    <div style={{ display: "flex", gap: 16, marginTop: 24, flexWrap: "wrap" }}>
+    <div className="stat-cards" style={{ display: "flex", gap: 16, marginTop: 24, flexWrap: "wrap" }}>
       <StatCard label="Total Listings" value="247" change="+4.9% vs last month"
         icon={<Icon d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z M16 3H8a2 2 0 0 0-2 2v2h12V5a2 2 0 0 0-2-2z" size={18} />} />
       <StatCard label="Active Clients" value="89" change="+3.4% vs last month"
@@ -188,7 +227,7 @@ const DashboardPage = ({ listings, activity, onViewAll }) => (
         icon={<Icon d={["M22 12h-4l-3 9L9 3l-3 9H2"]} size={18} />} />
     </div>
 
-    <div style={{ display: "flex", gap: 20, marginTop: 24 }}>
+    <div className="dash-bottom" style={{ display: "flex", gap: 20, marginTop: 24 }}>
       {/* Recent Activity */}
       <div style={{ flex: 2, background: "#fff", borderRadius: 12, padding: 24, border: "1px solid #F0ECEC", boxShadow: "0 1px 4px rgba(0,0,0,0.05)" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 }}>
@@ -261,7 +300,7 @@ const ListingsPage = ({ listings, onAdd }) => {
           </button>
         ))}
       </div>
-      <div style={{ background: "#fff", borderRadius: 12, border: "1px solid #F0ECEC", overflow: "hidden", boxShadow: "0 1px 4px rgba(0,0,0,0.05)" }}>
+      <div className="listings-table" style={{ background: "#fff", borderRadius: 12, border: "1px solid #F0ECEC", overflow: "hidden", boxShadow: "0 1px 4px rgba(0,0,0,0.05)" }}>
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ background: "#FAF7F7" }}>
@@ -551,6 +590,8 @@ export default function App() {
     setNewClient({ name: "", email: "", status: "active" });
   };
 
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   const navItems = [
     { id: "dashboard", label: "Dashboard", d: "M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10" },
     { id: "listings", label: "Listings", d: "M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z M16 3H8a2 2 0 0 0-2 2v2h12V5a2 2 0 0 0-2-2z" },
@@ -563,8 +604,11 @@ export default function App() {
   return (
     <div style={{ display: "flex", height: "100vh", fontFamily: "'Montserrat', 'Helvetica Neue', sans-serif", background: "#EBEBEB", overflow: "hidden" }}>
 
+      {/* Mobile overlay */}
+      {sidebarOpen && <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)} />}
+
       {/* Sidebar */}
-      <div style={{ width: 220, background: "#1C1A1A", display: "flex", flexDirection: "column", flexShrink: 0 }}>
+      <div className={`sidebar${sidebarOpen ? " open" : ""}`}>
         {/* Logo */}
         <div style={{ padding: "20px 16px 18px", borderBottom: "1px solid #2E2A2A", display: "flex", alignItems: "center", justifyContent: "center" }}>
           <img src="https://amdbizbrokers.com/wp-content/uploads/2021/03/AMD-Long-Wht6.png" alt="AMD Custom Business Brokers" style={{ width: "100%", maxWidth: 172, height: "auto", display: "block" }} />
@@ -574,15 +618,16 @@ export default function App() {
         <nav style={{ flex: 1, padding: "16px 10px", overflowY: "auto" }}>
           {navItems.map(n => n.zoom ? (
             <a key={n.id} href="https://us02web.zoom.us/j/89994092602" target="_blank" rel="noreferrer"
-              style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "9px 12px", borderRadius: 8, marginBottom: 2, textDecoration: "none",
+              onClick={() => setSidebarOpen(false)}
+              style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "11px 12px", borderRadius: 8, marginBottom: 2, textDecoration: "none",
                 background: "transparent", color: "#999", fontWeight: 500, fontSize: 14, transition: "all 0.15s" }}>
               <Icon d={n.d} size={16} stroke="#777" />
               {n.label}
               <Icon d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6 M15 3h6v6 M10 14L21 3" size={11} stroke="#555" />
             </a>
           ) : (
-            <button key={n.id} onClick={() => setPage(n.id)}
-              style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "9px 12px", borderRadius: 8, border: "none", cursor: "pointer", marginBottom: 2, textAlign: "left",
+            <button key={n.id} onClick={() => { setPage(n.id); setSidebarOpen(false); }}
+              style={{ width: "100%", display: "flex", alignItems: "center", gap: 10, padding: "11px 12px", borderRadius: 8, border: "none", cursor: "pointer", marginBottom: 2, textAlign: "left",
                 background: page === n.id ? "#8B1A2B" : "transparent",
                 color: page === n.id ? "#fff" : "#999", fontWeight: page === n.id ? 700 : 500, fontSize: 14, transition: "all 0.15s" }}>
               <Icon d={n.d} size={16} stroke={page === n.id ? "#fff" : "#777"} />
@@ -608,20 +653,31 @@ export default function App() {
       </div>
 
       {/* Main */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", minWidth: 0 }}>
         {/* Top bar */}
-        <div style={{ background: "#fff", borderBottom: "1px solid #EDE8E8", padding: "0 28px", height: 56, display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#1A7A40" }} />
-            <span style={{ fontSize: 12, color: "#888", fontWeight: 500 }}>All systems operational</span>
+        <div style={{ background: "#fff", borderBottom: "1px solid #EDE8E8", padding: "0 16px 0 16px", height: 56, display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            {/* Hamburger */}
+            <button onClick={() => setSidebarOpen(!sidebarOpen)}
+              style={{ background: "none", border: "none", cursor: "pointer", padding: 4, display: "flex", flexDirection: "column", gap: 5 }}>
+              <span style={{ display: "block", width: 22, height: 2, background: "#444", borderRadius: 2 }} />
+              <span style={{ display: "block", width: 22, height: 2, background: "#444", borderRadius: 2 }} />
+              <span style={{ display: "block", width: 22, height: 2, background: "#444", borderRadius: 2 }} />
+            </button>
+            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#1A7A40" }} />
+              <span style={{ fontSize: 12, color: "#888", fontWeight: 500 }}>All systems operational</span>
+            </div>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-            {[["247", "Listings", "#1A1A1A"], ["$342.8K", "Revenue", "#8B1A2B"], ["94.2%", "Close Rate", "#1A1A1A"]].map(([v, l, c]) => (
-              <div key={l} style={{ textAlign: "center" }}>
-                <div style={{ fontSize: 15, fontWeight: 800, color: c, fontFamily: "'Montserrat', sans-serif", lineHeight: 1 }}>{v}</div>
-                <div style={{ fontSize: 10, color: "#BBB", textTransform: "uppercase", letterSpacing: 0.5 }}>{l}</div>
-              </div>
-            ))}
+          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+            <div className="topbar-stats" style={{ alignItems: "center", gap: 20 }}>
+              {[["247", "Listings", "#1A1A1A"], ["$342.8K", "Revenue", "#8B1A2B"], ["94.2%", "Close Rate", "#1A1A1A"]].map(([v, l, c]) => (
+                <div key={l} style={{ textAlign: "center" }}>
+                  <div style={{ fontSize: 15, fontWeight: 800, color: c, fontFamily: "'Montserrat', sans-serif", lineHeight: 1 }}>{v}</div>
+                  <div style={{ fontSize: 10, color: "#BBB", textTransform: "uppercase", letterSpacing: 0.5 }}>{l}</div>
+                </div>
+              ))}
+            </div>
             <div style={{ position: "relative" }}>
               <button onClick={() => { setNotifOpen(!notifOpen); setNotifCount(0); }}
                 style={{ background: "none", border: "none", cursor: "pointer", color: "#888", position: "relative", display: "flex", alignItems: "center" }}>
@@ -645,7 +701,7 @@ export default function App() {
         </div>
 
         {/* Content */}
-        <div style={{ flex: 1, overflowY: "auto", padding: 28 }} onClick={() => notifOpen && setNotifOpen(false)}>
+        <div className="content-pad" style={{ flex: 1, overflowY: "auto" }} onClick={() => notifOpen && setNotifOpen(false)}>
           {page === "dashboard" && <DashboardPage listings={listings} activity={activity} onViewAll={() => setPage("listings")} />}
           {page === "listings" && <ListingsPage listings={listings} onAdd={() => setModal("addListing")} />}
           {page === "clients" && <ClientsPage clients={clients} onAdd={() => setModal("addClient")} />}
