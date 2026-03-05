@@ -468,9 +468,6 @@ const DocumentsPage = ({ docs }) => {
                 <div style={{ fontWeight: 700, fontSize: 14, color: "#1A1A1A" }}>{d.name}</div>
                 <div style={{ fontSize: 12, color: "#999", marginTop: 2 }}>{d.listing} · {d.type} · {d.size}</div>
               </div>
-              <div style={{ textAlign: "right" }}>
-                <div style={{ fontSize: 12, color: "#BBB" }}>{d.date}</div>
-              </div>
               <button onClick={e => e.stopPropagation()}
                 style={{ background: "none", border: "1.5px solid #E0DADA", borderRadius: 6, padding: "5px 12px", fontSize: 12, fontWeight: 600, cursor: "pointer", color: "#555" }}>
                 Download
