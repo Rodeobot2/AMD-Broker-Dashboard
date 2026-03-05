@@ -2,6 +2,15 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { useState } from "react";
 
+// Inject Montserrat font + uppercase nav globally
+const style = document.createElement("style");
+style.innerHTML = `
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap');
+  * { text-transform-reset: none; }
+  nav a, nav button { text-transform: uppercase !important; letter-spacing: 0.06em !important; font-size: 11px !important; font-weight: 800 !important; }
+`;
+document.head.appendChild(style);
+
 
 // ── Lucide-style inline SVGs to avoid import issues ──────────────────────────
 const Icon = ({ d, size = 18, stroke = "currentColor", fill = "none", strokeWidth = 1.8 }) => (
@@ -541,21 +550,13 @@ export default function App() {
   ];
 
   return (
-    <div style={{ display: "flex", height: "100vh", fontFamily: "'DM Sans', 'Helvetica Neue', sans-serif", background: "#F5F0F0", overflow: "hidden" }}>
+    <div style={{ display: "flex", height: "100vh", fontFamily: "'Montserrat', 'Helvetica Neue', sans-serif", background: "#EBEBEB", overflow: "hidden" }}>
 
       {/* Sidebar */}
-      <div style={{ width: 212, background: "#1C1A1A", display: "flex", flexDirection: "column", flexShrink: 0 }}>
+      <div style={{ width: 220, background: "#1C1A1A", display: "flex", flexDirection: "column", flexShrink: 0 }}>
         {/* Logo */}
-        <div style={{ padding: "24px 20px 20px", borderBottom: "1px solid #2E2A2A" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <div style={{ background: "#8B1A2B", borderRadius: 6, width: 28, height: 28, display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <span style={{ color: "#fff", fontWeight: 900, fontSize: 13, fontFamily: "Georgia, serif" }}>A</span>
-            </div>
-            <div>
-              <div style={{ color: "#fff", fontWeight: 900, fontSize: 11, letterSpacing: 1.5, lineHeight: 1 }}>AMD CUSTOM</div>
-              <div style={{ color: "#8B1A2B", fontWeight: 700, fontSize: 9, letterSpacing: 2, lineHeight: 1.4, textTransform: "uppercase" }}>Business Brokers</div>
-            </div>
-          </div>
+        <div style={{ padding: "20px 16px 18px", borderBottom: "1px solid #2E2A2A", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <img src="/logo.png" alt="AMD Custom Business Brokers" style={{ width: "100%", maxWidth: 172, height: "auto", display: "block" }} />
         </div>
 
         {/* Nav */}
