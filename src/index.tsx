@@ -567,7 +567,7 @@ export default function App() {
       <div style={{ width: 220, background: "#1C1A1A", display: "flex", flexDirection: "column", flexShrink: 0 }}>
         {/* Logo */}
         <div style={{ padding: "20px 16px 18px", borderBottom: "1px solid #2E2A2A", display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <img src="/logo.png" alt="AMD Custom Business Brokers" style={{ width: "100%", maxWidth: 172, height: "auto", display: "block" }} />
+          <img src="https://amdbizbrokers.com/wp-content/uploads/2021/03/AMD-Long-Wht6.png" alt="AMD Custom Business Brokers" style={{ width: "100%", maxWidth: 172, height: "auto", display: "block" }} />
         </div>
 
         {/* Nav */}
