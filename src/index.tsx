@@ -203,7 +203,7 @@ const DashboardPage = ({ listings, activity, onViewAll }) => (
   <div>
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
       <div>
-        <h1 className="page-heading" style={{ margin: 0, fontSize: 28, color: "#1A1A1A" }}>Dashboard</h1>
+        <h1 className="page-heading" style={{ margin: 0, fontSize: 28, color: "#1A1A1A" }}>AMD Dashboard</h1>
         <p style={{ margin: "6px 0 0", color: "#888", fontSize: 14 }}>Welcome back — here's your portfolio overview</p>
       </div>
     </div>
