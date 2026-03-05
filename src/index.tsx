@@ -1,6 +1,54 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+// ── Supabase client ───────────────────────────────────────────────────────────
+const SUPABASE_URL = "https://xrboointzluntdfyywry.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhyYm9vaW50emx1bnRkZnl5d3J5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA3NjQ4MDAsImV4cCI6MjA1NjM0MDgwMH0.placeholder";
+
+// Minimal Supabase fetch helper
+const sb = {
+  url: SUPABASE_URL,
+  key: SUPABASE_ANON_KEY,
+  async from(table: string) {
+    return {
+      async select() {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?select=*&order=created_at.desc`, {
+          headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` }
+        });
+        return res.json();
+      },
+      async insert(data: any) {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
+          method: "POST",
+          headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}`, "Content-Type": "application/json", Prefer: "return=representation" },
+          body: JSON.stringify(data)
+        });
+        return res.json();
+      },
+      async delete(id: string) {
+        await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`, {
+          method: "DELETE",
+          headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` }
+        });
+      }
+    };
+  },
+  async signIn(email: string, password: string) {
+    const res = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+      method: "POST",
+      headers: { apikey: SUPABASE_ANON_KEY, "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    });
+    return res.json();
+  },
+  async signOut(token: string) {
+    await fetch(`${SUPABASE_URL}/auth/v1/logout`, {
+      method: "POST",
+      headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${token}` }
+    });
+  }
+};
 
 // Inject Montserrat font + heading styles globally
 const style = document.createElement("style");
@@ -203,7 +251,7 @@ const DashboardPage = ({ listings, activity, onViewAll }) => (
   <div>
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
       <div>
-        <h1 className="page-heading" style={{ margin: 0, fontSize: 28, color: "#1A1A1A" }}>AMD Dashboard</h1>
+        <h1 className="page-heading" style={{ margin: 0, fontSize: 28, color: "#1A1A1A" }}>Dashboard</h1>
         <p style={{ margin: "6px 0 0", color: "#888", fontSize: 14 }}>Welcome back — here's your portfolio overview</p>
       </div>
     </div>
@@ -550,35 +598,122 @@ const FinancialPage = () => {
   );
 };
 
-// ── Main App ──────────────────────────────────────────────────────────────────
-export default function App() {
-  const [page, setPage] = useState("dashboard");
-  const [listings, setListings] = useState(LISTINGS);
-  const [clients, setClients] = useState(CLIENTS);
-  const [activity] = useState(ACTIVITY);
-  const [modal, setModal] = useState(null); // "addListing" | "addClient" | null
-  const [notifOpen, setNotifOpen] = useState(false);
-  const [notifCount, setNotifCount] = useState(3);
+// ── Login Page ────────────────────────────────────────────────────────────────
+const LoginPage = ({ onLogin }: { onLogin: (token: string, email: string) => void }) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  // New listing form state
-  const [newListing, setNewListing] = useState({ name: "", type: "Commercial", units: "", price: "", agent: "Sarah Johnson", status: "pending" });
-  const [newClient, setNewClient] = useState({ name: "", email: "", status: "active" });
-
-  const addListing = () => {
-    if (!newListing.name || !newListing.units) return;
-    setListings(prev => [...prev, { id: Date.now(), ...newListing, units: parseInt(newListing.units), filled: 0 }]);
-    setModal(null);
-    setNewListing({ name: "", type: "Commercial", units: "", price: "", agent: "Sarah Johnson", status: "pending" });
+  const handleLogin = async () => {
+    if (!email || !password) { setError("Please enter email and password."); return; }
+    setLoading(true); setError("");
+    const data = await sb.signIn(email, password);
+    setLoading(false);
+    if (data.access_token) {
+      onLogin(data.access_token, email);
+    } else {
+      setError("Invalid email or password.");
+    }
   };
 
-  const addClient = () => {
+  return (
+    <div style={{ minHeight: "100vh", background: "#1C1A1A", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "'Montserrat', sans-serif", padding: 24 }}>
+      <div style={{ background: "#fff", borderRadius: 16, padding: "40px 36px", width: "100%", maxWidth: 400, boxShadow: "0 24px 60px rgba(0,0,0,0.4)" }}>
+        <div style={{ textAlign: "center", marginBottom: 32 }}>
+          <img src="https://amdbizbrokers.com/wp-content/uploads/2021/03/AMD-Long-Wht6.png"
+            alt="AMD Custom Business Brokers"
+            style={{ width: 200, background: "#1C1A1A", padding: "12px 16px", borderRadius: 8, marginBottom: 8 }} />
+          <p style={{ color: "#888", fontSize: 13, margin: "12px 0 0" }}>Sign in to your dashboard</p>
+        </div>
+        {error && <div style={{ background: "#FEE8E8", color: "#8B1A2B", padding: "10px 14px", borderRadius: 8, fontSize: 13, marginBottom: 16, fontWeight: 600 }}>{error}</div>}
+        <div style={{ marginBottom: 14 }}>
+          <label style={{ display: "block", fontSize: 11, fontWeight: 700, color: "#666", marginBottom: 6, textTransform: "uppercase", letterSpacing: 0.5 }}>Email</label>
+          <input type="email" value={email} onChange={e => setEmail(e.target.value)}
+            placeholder="you@amdbrokers.com"
+            style={{ width: "100%", padding: "11px 14px", border: "1.5px solid #E0DADA", borderRadius: 8, fontSize: 14, outline: "none", boxSizing: "border-box" as any }} />
+        </div>
+        <div style={{ marginBottom: 24 }}>
+          <label style={{ display: "block", fontSize: 11, fontWeight: 700, color: "#666", marginBottom: 6, textTransform: "uppercase", letterSpacing: 0.5 }}>Password</label>
+          <input type="password" value={password} onChange={e => setPassword(e.target.value)}
+            onKeyDown={e => e.key === "Enter" && handleLogin()}
+            placeholder="••••••••"
+            style={{ width: "100%", padding: "11px 14px", border: "1.5px solid #E0DADA", borderRadius: 8, fontSize: 14, outline: "none", boxSizing: "border-box" as any }} />
+        </div>
+        <button onClick={handleLogin} disabled={loading}
+          style={{ width: "100%", padding: "13px", background: "#8B1A2B", color: "#fff", border: "none", borderRadius: 8, fontWeight: 800, fontSize: 15, cursor: "pointer", fontFamily: "'Montserrat', sans-serif", textTransform: "uppercase", letterSpacing: "0.05em", opacity: loading ? 0.7 : 1 }}>
+          {loading ? "Signing in..." : "Sign In"}
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// ── Main App ──────────────────────────────────────────────────────────────────
+export default function App() {
+  const [token, setToken] = useState<string | null>(null);
+  const [userEmail, setUserEmail] = useState("");
+  const [page, setPage] = useState("dashboard");
+  const [listings, setListings] = useState<any[]>([]);
+  const [clients, setClients] = useState<any[]>([]);
+  const [activity] = useState(ACTIVITY);
+  const [modal, setModal] = useState<string | null>(null);
+  const [notifOpen, setNotifOpen] = useState(false);
+  const [notifCount, setNotifCount] = useState(3);
+  const [loading, setLoading] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const [newListing, setNewListing] = useState({ name: "", type: "Commercial", units: "", price: "", agent: "", status: "pending" });
+  const [newClient, setNewClient] = useState({ name: "", email: "", status: "active" });
+
+  // Load data from Supabase when logged in
+  useEffect(() => {
+    if (!token) return;
+    const load = async () => {
+      setLoading(true);
+      const [l, c] = await Promise.all([
+        (await sb.from("listings")).select(),
+        (await sb.from("clients")).select(),
+      ]);
+      setListings(Array.isArray(l) ? l : []);
+      setClients(Array.isArray(c) ? c : []);
+      setLoading(false);
+    };
+    load();
+  }, [token]);
+
+  const handleLogin = (t: string, email: string) => {
+    setToken(t);
+    setUserEmail(email);
+  };
+
+  const handleSignOut = async () => {
+    if (token) await sb.signOut(token);
+    setToken(null);
+    setUserEmail("");
+    setListings([]);
+    setClients([]);
+  };
+
+  if (!token) return <LoginPage onLogin={handleLogin} />;
+
+  const addListing = async () => {
+    if (!newListing.name || !newListing.units) return;
+    const row = { ...newListing, units: parseInt(newListing.units), filled: 0 };
+    const result = await (await sb.from("listings")).insert(row);
+    if (Array.isArray(result)) setListings(prev => [result[0], ...prev]);
+    setModal(null);
+    setNewListing({ name: "", type: "Commercial", units: "", price: "", agent: "", status: "pending" });
+  };
+
+  const addClient = async () => {
     if (!newClient.name) return;
-    setClients(prev => [...prev, { id: Date.now(), ...newClient, listings: 0, revenue: "$0", joined: "Mar 2026" }]);
+    const row = { ...newClient, listings: 0, revenue: "$0", joined: new Date().toLocaleDateString("en-US", { month: "short", year: "numeric" }) };
+    const result = await (await sb.from("clients")).insert(row);
+    if (Array.isArray(result)) setClients(prev => [result[0], ...prev]);
     setModal(null);
     setNewClient({ name: "", email: "", status: "active" });
   };
-
-  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const navItems = [
     { id: "dashboard", label: "Dashboard", d: "M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z M9 22V12h6v10" },
@@ -627,13 +762,13 @@ export default function App() {
         {/* User */}
         <div style={{ padding: "16px 16px 20px", borderTop: "1px solid #2E2A2A" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
-            <Avatar initials="JA" size={34} />
+            <Avatar initials={userEmail ? userEmail.slice(0,2).toUpperCase() : "JA"} size={34} />
             <div>
-              <div style={{ color: "#fff", fontWeight: 700, fontSize: 13 }}>John Agent</div>
+              <div style={{ color: "#fff", fontWeight: 700, fontSize: 12, wordBreak: "break-all" }}>{userEmail || "AMD Broker"}</div>
               <div style={{ color: "#777", fontSize: 11 }}>AMD Broker</div>
             </div>
           </div>
-          <button style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", color: "#666", fontSize: 13, cursor: "pointer", padding: "4px 0" }}>
+          <button onClick={handleSignOut} style={{ display: "flex", alignItems: "center", gap: 6, background: "none", border: "none", color: "#666", fontSize: 13, cursor: "pointer", padding: "4px 0" }}>
             <Icon d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4 M16 17l5-5-5-5 M21 12H9" size={14} stroke="#666" />
             Sign Out
           </button>
@@ -690,16 +825,26 @@ export default function App() {
 
         {/* Content */}
         <div className="content-pad" style={{ flex: 1, overflowY: "auto" }} onClick={() => notifOpen && setNotifOpen(false)}>
-          {page === "dashboard" && <DashboardPage listings={listings} activity={activity} onViewAll={() => setPage("listings")} />}
-          {page === "listings" && <ListingsPage listings={listings} onAdd={() => setModal("addListing")} />}
-          {page === "clients" && <ClientsPage clients={clients} onAdd={() => setModal("addClient")} />}
-          {page === "documents" && <DocumentsPage docs={DOCUMENTS} />}
-          {page === "workorders" && (
-            <div style={{ textAlign: "center", paddingTop: 80, color: "#888" }}>
-              <div style={{ fontSize: 40, marginBottom: 12 }}>🔧</div>
-              <h2 className="page-heading" style={{ color: "#1A1A1A", fontSize: 28 }}>Work Orders</h2>
-              <p>Work order management coming soon.</p>
+          {loading ? (
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100%", flexDirection: "column", gap: 16 }}>
+              <div style={{ width: 40, height: 40, border: "4px solid #F0ECEC", borderTop: "4px solid #8B1A2B", borderRadius: "50%", animation: "spin 0.8s linear infinite" }} />
+              <p style={{ color: "#888", fontSize: 14, fontWeight: 600 }}>Loading your data...</p>
+              <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
             </div>
+          ) : (
+            <>
+              {page === "dashboard" && <DashboardPage listings={listings} activity={activity} onViewAll={() => setPage("listings")} />}
+              {page === "listings" && <ListingsPage listings={listings} onAdd={() => setModal("addListing")} />}
+              {page === "clients" && <ClientsPage clients={clients} onAdd={() => setModal("addClient")} />}
+              {page === "documents" && <DocumentsPage docs={DOCUMENTS} />}
+              {page === "workorders" && (
+                <div style={{ textAlign: "center", paddingTop: 80, color: "#888" }}>
+                  <div style={{ fontSize: 40, marginBottom: 12 }}>🔧</div>
+                  <h2 className="page-heading" style={{ color: "#1A1A1A", fontSize: 28 }}>Work Orders</h2>
+                  <p>Work order management coming soon.</p>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
