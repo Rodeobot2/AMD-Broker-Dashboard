@@ -12,6 +12,13 @@ style.innerHTML = `
     text-transform: uppercase !important;
     letter-spacing: 0.04em !important;
   }
+  .section-heading {
+    font-family: 'Montserrat', sans-serif !important;
+    font-weight: 900 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.06em !important;
+    font-size: 12px !important;
+  }
 `;
 document.head.appendChild(style);
 
@@ -95,7 +102,7 @@ const StatCard = ({ label, value, change, icon }) => (
       </span>
     </div>
     <div style={{ marginTop: 16, fontSize: 11, color: "#999", textTransform: "uppercase", letterSpacing: 1, fontWeight: 600 }}>{label}</div>
-    <div style={{ fontSize: 26, fontWeight: 800, color: "#1A1A1A", marginTop: 4, fontFamily: "'Georgia', serif" }}>{value}</div>
+    <div style={{ fontSize: 26, fontWeight: 800, color: "#1A1A1A", marginTop: 4, fontFamily: "'Montserrat', sans-serif" }}>{value}</div>
   </div>
 );
 
@@ -115,7 +122,7 @@ const FillBar = ({ pct }) => (
 );
 
 const Avatar = ({ initials, color = "#8B1A2B", size = 38 }) => (
-  <div style={{ width: size, height: size, borderRadius: "50%", background: color, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 700, fontSize: size * 0.34, flexShrink: 0, fontFamily: "Georgia, serif" }}>
+  <div style={{ width: size, height: size, borderRadius: "50%", background: color, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 700, fontSize: size * 0.34, flexShrink: 0, fontFamily: "'Montserrat', sans-serif" }}>
     {initials}
   </div>
 );
@@ -127,7 +134,7 @@ const Modal = ({ title, onClose, children }) => (
     <div style={{ background: "#fff", borderRadius: 16, padding: 32, width: "100%", maxWidth: 520, maxHeight: "80vh", overflowY: "auto", boxShadow: "0 20px 60px rgba(0,0,0,0.2)" }}
       onClick={e => e.stopPropagation()}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
-        <h2 style={{ margin: 0, fontSize: 20, fontFamily: "Georgia, serif", color: "#1A1A1A" }}>{title}</h2>
+        <h2 style={{ margin: 0, fontSize: 20, fontFamily: "'Montserrat', sans-serif", color: "#1A1A1A", textTransform: "uppercase", letterSpacing: "0.04em", fontWeight: 900 }}>{title}</h2>
         <button onClick={onClose} style={{ background: "none", border: "none", cursor: "pointer", fontSize: 22, color: "#999", lineHeight: 1 }}>×</button>
       </div>
       {children}
@@ -186,7 +193,7 @@ const DashboardPage = ({ listings, activity, onViewAll }) => (
       <div style={{ flex: 2, background: "#fff", borderRadius: 12, padding: 24, border: "1px solid #F0ECEC", boxShadow: "0 1px 4px rgba(0,0,0,0.05)" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 20 }}>
           <div>
-            <h3 style={{ margin: 0, fontSize: 16, fontWeight: 800, fontFamily: "Georgia, serif" }}>Recent Activity</h3>
+            <h3 style={{ margin: 0, fontSize: 13, fontWeight: 900, fontFamily: "'Montserrat', sans-serif", textTransform: "uppercase", letterSpacing: "0.05em" }}>Recent Activity</h3>
             <p style={{ margin: "4px 0 0", fontSize: 12, color: "#999" }}>Latest updates across your portfolio</p>
           </div>
           <button style={{ background: "none", border: "1.5px solid #D0C8C8", borderRadius: 7, padding: "5px 14px", fontSize: 12, fontWeight: 600, cursor: "pointer", color: "#444" }}>View All</button>
@@ -209,7 +216,7 @@ const DashboardPage = ({ listings, activity, onViewAll }) => (
 
       {/* Listing Activity */}
       <div style={{ flex: 1, background: "#fff", borderRadius: 12, padding: 24, border: "1px solid #F0ECEC", boxShadow: "0 1px 4px rgba(0,0,0,0.05)" }}>
-        <h3 style={{ margin: "0 0 4px", fontSize: 16, fontWeight: 800, fontFamily: "Georgia, serif" }}>Listing Activity</h3>
+        <h3 style={{ margin: "0 0 4px", fontSize: 13, fontWeight: 900, fontFamily: "'Montserrat', sans-serif", textTransform: "uppercase", letterSpacing: "0.05em" }}>Listing Activity</h3>
         <p style={{ margin: "0 0 20px", fontSize: 12, color: "#999" }}>Current fill rates</p>
         {listings.slice(0, 5).map(l => (
           <div key={l.id} style={{ marginBottom: 16 }}>
@@ -311,7 +318,7 @@ const ClientsPage = ({ clients, onAdd }) => (
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, background: "#FAF7F7", borderRadius: 8, padding: 12 }}>
             {[["Listings", c.listings], ["Revenue", c.revenue], ["Joined", c.joined]].map(([k, v]) => (
               <div key={k} style={{ textAlign: "center" }}>
-                <div style={{ fontSize: 14, fontWeight: 800, color: "#8B1A2B", fontFamily: "Georgia, serif" }}>{v}</div>
+                <div style={{ fontSize: 14, fontWeight: 800, color: "#8B1A2B", fontFamily: "'Montserrat', sans-serif" }}>{v}</div>
                 <div style={{ fontSize: 10, color: "#AAA", textTransform: "uppercase", letterSpacing: 0.5 }}>{k}</div>
               </div>
             ))}
@@ -460,7 +467,7 @@ const MeetingsPage = ({ meetings }) => (
       {meetings.map(m => (
         <div key={m.id} style={{ background: "#fff", borderRadius: 12, padding: 20, border: "1px solid #F0ECEC", display: "flex", alignItems: "center", gap: 16, boxShadow: "0 1px 4px rgba(0,0,0,0.05)" }}>
           <div style={{ background: "#8B1A2B", borderRadius: 10, padding: "10px 14px", textAlign: "center", color: "#fff", minWidth: 52 }}>
-            <div style={{ fontSize: 18, fontWeight: 800, fontFamily: "Georgia, serif", lineHeight: 1 }}>{m.date.split(" ")[1].replace(",", "")}</div>
+            <div style={{ fontSize: 18, fontWeight: 800, fontFamily: "'Montserrat', sans-serif", lineHeight: 1 }}>{m.date.split(" ")[1].replace(",", "")}</div>
             <div style={{ fontSize: 10, fontWeight: 600, opacity: 0.8 }}>{m.date.split(" ")[0].toUpperCase()}</div>
           </div>
           <div style={{ flex: 1 }}>
@@ -489,13 +496,13 @@ const FinancialPage = () => {
         {[["YTD Revenue", "$1.7M", "+12.4%"], ["Avg Deal Size", "$148K", "+6.1%"], ["Commission Earned", "$51K", "+9.2%"], ["Pending Payments", "$12.4K", ""]].map(([l, v, c]) => (
           <div key={l} style={{ flex: 1, minWidth: 160, background: "#fff", borderRadius: 12, padding: "20px 24px", border: "1px solid #F0ECEC", boxShadow: "0 1px 4px rgba(0,0,0,0.05)" }}>
             <div style={{ fontSize: 11, color: "#999", textTransform: "uppercase", letterSpacing: 1, fontWeight: 600 }}>{l}</div>
-            <div style={{ fontSize: 26, fontWeight: 800, color: "#1A1A1A", marginTop: 6, fontFamily: "Georgia, serif" }}>{v}</div>
+            <div style={{ fontSize: 26, fontWeight: 800, color: "#1A1A1A", marginTop: 6, fontFamily: "'Montserrat', sans-serif" }}>{v}</div>
             {c && <div style={{ fontSize: 12, color: "#1A7A40", fontWeight: 600, marginTop: 4 }}>↗ {c}</div>}
           </div>
         ))}
       </div>
       <div style={{ background: "#fff", borderRadius: 12, padding: 28, border: "1px solid #F0ECEC", boxShadow: "0 1px 4px rgba(0,0,0,0.05)" }}>
-        <h3 style={{ margin: "0 0 24px", fontFamily: "Georgia, serif", fontSize: 16 }}>Monthly Revenue Trend</h3>
+        <h3 className="section-heading" style={{ margin: "0 0 24px" }}>Monthly Revenue Trend</h3>
         <div style={{ display: "flex", alignItems: "flex-end", gap: 12, height: 180 }}>
           {months.map((m, i) => {
             const h = revenue[i] ? Math.round((revenue[i] / maxRev) * 160) : 0;
@@ -611,7 +618,7 @@ export default function App() {
           <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
             {[["247", "Listings", "#1A1A1A"], ["$342.8K", "Revenue", "#8B1A2B"], ["94.2%", "Close Rate", "#1A1A1A"]].map(([v, l, c]) => (
               <div key={l} style={{ textAlign: "center" }}>
-                <div style={{ fontSize: 15, fontWeight: 800, color: c, fontFamily: "Georgia, serif", lineHeight: 1 }}>{v}</div>
+                <div style={{ fontSize: 15, fontWeight: 800, color: c, fontFamily: "'Montserrat', sans-serif", lineHeight: 1 }}>{v}</div>
                 <div style={{ fontSize: 10, color: "#BBB", textTransform: "uppercase", letterSpacing: 0.5 }}>{l}</div>
               </div>
             ))}
