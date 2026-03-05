@@ -2,12 +2,16 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { useState } from "react";
 
-// Inject Montserrat font + uppercase nav globally
+// Inject Montserrat font + heading styles globally
 const style = document.createElement("style");
 style.innerHTML = `
   @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&display=swap');
-  * { text-transform-reset: none; }
-  nav a, nav button { text-transform: uppercase !important; letter-spacing: 0.06em !important; font-size: 11px !important; font-weight: 800 !important; }
+  .page-heading {
+    font-family: 'Montserrat', sans-serif !important;
+    font-weight: 900 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.04em !important;
+  }
 `;
 document.head.appendChild(style);
 
@@ -153,7 +157,7 @@ const DashboardPage = ({ listings, activity, onViewAll }) => (
   <div>
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 8 }}>
       <div>
-        <h1 style={{ margin: 0, fontSize: 32, fontFamily: "Georgia, serif", fontWeight: 800, color: "#1A1A1A" }}>Dashboard</h1>
+        <h1 className="page-heading" style={{ margin: 0, fontSize: 28, color: "#1A1A1A" }}>Dashboard</h1>
         <p style={{ margin: "6px 0 0", color: "#888", fontSize: 14 }}>Welcome back — here's your portfolio overview</p>
       </div>
       <div style={{ display: "flex", gap: 10 }}>
@@ -234,7 +238,7 @@ const ListingsPage = ({ listings, onAdd }) => {
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
         <div>
-          <h1 style={{ margin: 0, fontSize: 28, fontFamily: "Georgia, serif", fontWeight: 800 }}>Listings</h1>
+          <h1 className="page-heading" style={{ margin: 0, fontSize: 28, color: "#1A1A1A" }}>Listings</h1>
           <p style={{ margin: "4px 0 0", color: "#888", fontSize: 14 }}>{listings.length} total properties</p>
         </div>
         <button onClick={onAdd} style={{ background: "#8B1A2B", color: "#fff", border: "none", borderRadius: 8, padding: "9px 20px", fontWeight: 700, fontSize: 14, cursor: "pointer" }}>+ Add Listing</button>
@@ -288,7 +292,7 @@ const ClientsPage = ({ clients, onAdd }) => (
   <div>
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
       <div>
-        <h1 style={{ margin: 0, fontSize: 28, fontFamily: "Georgia, serif", fontWeight: 800 }}>Clients</h1>
+        <h1 className="page-heading" style={{ margin: 0, fontSize: 28, color: "#1A1A1A" }}>Clients</h1>
         <p style={{ margin: "4px 0 0", color: "#888", fontSize: 14 }}>{clients.length} registered agents & clients</p>
       </div>
       <button onClick={onAdd} style={{ background: "#8B1A2B", color: "#fff", border: "none", borderRadius: 8, padding: "9px 20px", fontWeight: 700, fontSize: 14, cursor: "pointer" }}>+ Add Client</button>
@@ -380,7 +384,7 @@ const DocumentsPage = ({ docs }) => {
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
         <div>
-          <h1 style={{ margin: 0, fontSize: 28, fontFamily: "Georgia, serif", fontWeight: 800 }}>Documents</h1>
+          <h1 className="page-heading" style={{ margin: 0, fontSize: 28, color: "#1A1A1A" }}>Documents</h1>
           <p style={{ margin: "4px 0 0", color: "#888", fontSize: 14 }}>{docs.length} files in your portfolio</p>
         </div>
         <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
@@ -447,7 +451,7 @@ const MeetingsPage = ({ meetings }) => (
   <div>
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
       <div>
-        <h1 style={{ margin: 0, fontSize: 28, fontFamily: "Georgia, serif", fontWeight: 800 }}>Meetings</h1>
+        <h1 className="page-heading" style={{ margin: 0, fontSize: 28, color: "#1A1A1A" }}>Meetings</h1>
         <p style={{ margin: "4px 0 0", color: "#888", fontSize: 14 }}>{meetings.length} scheduled</p>
       </div>
       <button style={{ background: "#8B1A2B", color: "#fff", border: "none", borderRadius: 8, padding: "9px 20px", fontWeight: 700, fontSize: 14, cursor: "pointer" }}>+ Schedule</button>
@@ -478,7 +482,7 @@ const FinancialPage = () => {
   return (
     <div>
       <div style={{ marginBottom: 24 }}>
-        <h1 style={{ margin: 0, fontSize: 28, fontFamily: "Georgia, serif", fontWeight: 800 }}>Financial</h1>
+        <h1 className="page-heading" style={{ margin: 0, fontSize: 28, color: "#1A1A1A" }}>Financial</h1>
         <p style={{ margin: "4px 0 0", color: "#888", fontSize: 14 }}>Revenue & performance overview</p>
       </div>
       <div style={{ display: "flex", gap: 16, marginBottom: 24, flexWrap: "wrap" }}>
@@ -642,7 +646,7 @@ export default function App() {
           {page === "workorders" && (
             <div style={{ textAlign: "center", paddingTop: 80, color: "#888" }}>
               <div style={{ fontSize: 40, marginBottom: 12 }}>🔧</div>
-              <h2 style={{ fontFamily: "Georgia, serif", color: "#1A1A1A" }}>Work Orders</h2>
+              <h2 className="page-heading" style={{ color: "#1A1A1A", fontSize: 28 }}>Work Orders</h2>
               <p>Work order management coming soon.</p>
             </div>
           )}
