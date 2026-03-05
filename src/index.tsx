@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 
 // ── Supabase client ───────────────────────────────────────────────────────────
 const SUPABASE_URL = "https://xrboointzluntdfyywry.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhyYm9vaW50emx1bnRkZnl5d3J5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDA3NjQ4MDAsImV4cCI6MjA1NjM0MDgwMH0.placeholder";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhyYm9vaW50emx1bnRkZnl5d3J5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI2ODA4MDEsImV4cCI6MjA4ODI1NjgwMX0.acRXdVAikO5Yyqnalvs3qvkKuhUbxSWqmxOsk2If8-A";
 
 // Minimal Supabase fetch helper
 const sb = {
