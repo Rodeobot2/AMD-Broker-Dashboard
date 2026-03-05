@@ -206,14 +206,6 @@ const DashboardPage = ({ listings, activity, onViewAll }) => (
         <h1 className="page-heading" style={{ margin: 0, fontSize: 28, color: "#1A1A1A" }}>Dashboard</h1>
         <p style={{ margin: "6px 0 0", color: "#888", fontSize: 14 }}>Welcome back — here's your portfolio overview</p>
       </div>
-      <div style={{ display: "flex", gap: 10 }}>
-        <button onClick={onViewAll} style={{ border: "1.5px solid #D0C8C8", background: "#fff", borderRadius: 8, padding: "8px 18px", fontWeight: 600, fontSize: 14, cursor: "pointer", color: "#444", display: "flex", alignItems: "center", gap: 6 }}>
-          <Icon d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z" size={15} /> View All
-        </button>
-        <button style={{ background: "#8B1A2B", color: "#fff", border: "none", borderRadius: 8, padding: "8px 18px", fontWeight: 700, fontSize: 14, cursor: "pointer", display: "flex", alignItems: "center", gap: 6 }}>
-          + Quick Add
-        </button>
-      </div>
     </div>
 
     <div className="stat-cards" style={{ display: "flex", gap: 16, marginTop: 24, flexWrap: "wrap" }}>
@@ -477,8 +469,7 @@ const DocumentsPage = ({ docs }) => {
                 <div style={{ fontSize: 12, color: "#999", marginTop: 2 }}>{d.listing} · {d.type} · {d.size}</div>
               </div>
               <div style={{ textAlign: "right" }}>
-                <Badge status={d.status} />
-                <div style={{ fontSize: 11, color: "#BBB", marginTop: 4 }}>{d.date}</div>
+                <div style={{ fontSize: 12, color: "#BBB" }}>{d.date}</div>
               </div>
               <button onClick={e => e.stopPropagation()}
                 style={{ background: "none", border: "1.5px solid #E0DADA", borderRadius: 6, padding: "5px 12px", fontSize: 12, fontWeight: 600, cursor: "pointer", color: "#555" }}>
